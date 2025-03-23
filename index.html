@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports18 HD Live Stream</title>
+
+    <!-- Show alert immediately after page load -->
+    <script>
+        window.onload = function () {
+            alert("⚠️ We have faced a technical issue in streaming.\nWe will continue as we crack an access.");
+        };
+    </script>
 </head>
 
 <body style="margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh;">
@@ -45,7 +52,6 @@
                     }
                 }
             });
-
         }
         // Fallback for Safari
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
