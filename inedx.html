@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports18 HD Live Stream</title>
+</head>
+<body style="margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+    <video id="video" width="100%" height="auto" controls autoplay></video>
+
+    <!-- HLS.js Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.3.5"></script>
+
+    <script>
+        var video = document.getElementById("video");
+        var videoSrc = "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/index.m3u8?hdnea=exp=1742733220~acl=/*~hmac=8a915461ca7185c35a320d7708e6f1c1eb5494f24a7d4bdd7ed85fd41353d0f6";
+
+        // Check if HLS is supported in the browser
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                video.play();
+            });
+        } 
+        // Fallback for Safari
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function () {
+                video.play();
+            });
+        } 
+        // If unsupported, show an error
+        else {
+            alert("⚠️ Your browser does not support HLS streaming.");
+        }
+    </script>
+
+</body>
+</html>
