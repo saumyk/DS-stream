@@ -5,86 +5,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports18 HD Live Stream</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Custom Skins/Themes -->
     <style>
         body {
             margin: 0;
             background-color: #000;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        #video-container {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        video {
+        #video {
             width: 100%;
             height: auto;
+            max-width: 100%;
         }
 
         #controls {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: flex;
-            gap: 10px;
+            margin-top: 10px;
+            text-align: center;
         }
 
-        button {
-            padding: 8px 12px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        select, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
         }
 
-        button:hover {
-            background-color: #e64a19;
-        }
-
-        #share-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        #countdown {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 18px;
-            color: #fff;
-        }
-
-        #floating-reactions {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            gap: 10px;
+        #tg-button {
+            margin-top: 15px;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="video-container">
-        <video id="video" controls autoplay></video>
-        <div id="countdown"></div>
-        <div id="controls">
-            <button onclick="replay10()">⏪ Replay 10s</button>
-            <button onclick="toggleAudio()">🔊 Audio Only</button>
-            <button onclick="toggleSkin()">🎨 Change Theme</button>
-        </div>
-        <div id="floating-reactions"></div>
-        <button id="share-btn" onclick="shareStream()">📢 Share Stream</button>
+    <!-- Video Player -->
+    <video id="video" controls autoplay></video>
+
+    <!-- Quality Selector & Extra Controls -->
+    <div id="controls">
+        <select id="quality" onchange="changeQuality()">
+            <option value="1080p">1080P (HD)</option>
+            <option value="720p">720P</option>
+            <option value="480p">480P</option>
+            <option value="280p">280P</option>
+            <option value="240p">240P</option>
+        </select>
+        <button onclick="replayLast10Seconds()">⏪ Replay 10s</button>
+        <button onclick="toggleAudioMode()">🔊 Audio Only</button>
+    </div>
+
+    <!-- Telegram Button -->
+    <div id="tg-button">
+        <a href="https://t.me/dhyeygotyou" target="_blank">
+            <button>📢 Join Telegram Channel</button>
+        </a>
     </div>
 
     <!-- HLS.js Library (CDN) -->
@@ -92,129 +69,69 @@
 
     <script>
         var video = document.getElementById("video");
-        var videoSrc = "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/index.m3u8";
+        var hls = new Hls();
+        var currentQuality = "1080p"; // Default Quality
+        var isAudioOnly = false; // For audio-only mode
 
-        // Load video using HLS
-        if (Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource(videoSrc);
-            hls.attachMedia(video);
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = videoSrc;
+        // Define Stream URLs
+        var streamLinks = {
+            "1080p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=3728000.m3u8",
+            "720p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=1275600.m3u8",
+            "480p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=662800.m3u8",
+            "280p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=305200.m3u8",
+            "240p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=151600.m3u8"
+        };
+
+        // Load Stream Based on Selected Quality
+        function loadStream(url) {
+            if (Hls.isSupported()) {
+                hls.detachMedia();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+                video.src = url;
+                video.addEventListener("loadedmetadata", function () {
+                    video.play();
+                });
+            } else {
+                alert("⚠️ Your browser does not support HLS streaming.");
+            }
         }
 
-        // 📚 Bookmark Timestamp for Resume Watching
-        window.onload = function () {
-            var lastTime = localStorage.getItem("videoTimestamp");
-            if (lastTime) {
-                video.currentTime = lastTime;
-            }
-        };
+        // Change Video Quality
+        function changeQuality() {
+            var selectedQuality = document.getElementById("quality").value;
+            currentQuality = selectedQuality;
+            loadStream(streamLinks[selectedQuality]);
+        }
 
-        window.onbeforeunload = function () {
-            localStorage.setItem("videoTimestamp", video.currentTime);
-        };
-
-        // 🔁 Auto Replay Last 10 Seconds
-        function replay10() {
+        // Replay Last 10 Seconds
+        function replayLast10Seconds() {
             video.currentTime = Math.max(0, video.currentTime - 10);
         }
 
-        // 🔊 Audio Only Mode
-        function toggleAudio() {
-            if (video.muted) {
-                video.muted = false;
-                video.play();
+        // Toggle Audio-Only Mode
+        function toggleAudioMode() {
+            if (isAudioOnly) {
+                loadStream(streamLinks[currentQuality]);
+                isAudioOnly = false;
+                alert("🎥 Switched to Video Mode");
             } else {
-                video.muted = true;
-                video.pause();
+                video.muted = false;
+                loadStream(streamLinks[currentQuality]);
+                video.style.display = "none"; // Hide video, play audio
+                isAudioOnly = true;
+                alert("🎧 Switched to Audio-Only Mode");
             }
         }
 
-        // 🎨 Theme Toggle
-        var themes = ["light-theme.css", "dark-theme.css"];
-        var currentThemeIndex = 0;
-
-        function toggleSkin() {
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            document.querySelector("link[rel='stylesheet']").href = themes[currentThemeIndex];
-        }
-
-        // 📅 Countdown Auto-Play
-        var countdownTimer;
-        var countdownDuration = 10;
-
-        function startCountdown() {
-            var countdownElement = document.getElementById("countdown");
-            var timeLeft = countdownDuration;
-
-            countdownTimer = setInterval(function () {
-                if (timeLeft <= 0) {
-                    clearInterval(countdownTimer);
-                    video.play();
-                    countdownElement.innerHTML = "";
-                } else {
-                    countdownElement.innerHTML = `⏰ Starting in ${timeLeft} seconds...`;
-                    timeLeft--;
-                }
-            }, 1000);
-        }
-
-        // 📢 Share Stream
-        function shareStream() {
-            var streamUrl = window.location.href;
-            navigator.clipboard.writeText(streamUrl);
-            alert("✅ Stream link copied to clipboard!");
-        }
-
-        // 📱 Floating Chat/Reaction Emojis
-        function showReaction(emoji) {
-            var emojiElement = document.createElement("div");
-            emojiElement.innerHTML = emoji;
-            emojiElement.style.fontSize = "30px";
-            emojiElement.style.position = "absolute";
-            emojiElement.style.top = "50%";
-            emojiElement.style.left = "50%";
-            emojiElement.style.transform = "translate(-50%, -50%)";
-            emojiElement.style.opacity = "1";
-            emojiElement.style.transition = "all 1s ease-out";
-
-            document.getElementById("floating-reactions").appendChild(emojiElement);
-
-            setTimeout(function () {
-                emojiElement.style.transform = "translate(-50%, -100%)";
-                emojiElement.style.opacity = "0";
-                setTimeout(() => emojiElement.remove(), 1000);
-            }, 100);
-        }
-
-        // 🕹️ Keyboard Shortcuts
-        document.addEventListener("keydown", function (event) {
-            switch (event.key) {
-                case " ":
-                    event.preventDefault();
-                    video.paused ? video.play() : video.pause();
-                    break;
-                case "m":
-                    video.muted = !video.muted;
-                    break;
-                case "f":
-                    video.requestFullscreen();
-                    break;
-                case "r":
-                    replay10();
-                    break;
-            }
-        });
-
-        // 🎮 Remote Control via Telegram Bot (Webhook example)
-        function controlFromTelegram(action) {
-            if (action === "play") {
-                video.play();
-            } else if (action === "pause") {
-                video.pause();
-            }
-        }
+        // Load Default Quality on Page Load
+        window.onload = function () {
+            loadStream(streamLinks[currentQuality]);
+        };
     </script>
 
 </body>
