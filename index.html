@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports18 HD Live Stream</title>
 </head>
+
 <body style="margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh;">
 
     <video id="video" width="100%" height="auto" controls autoplay></video>
@@ -22,21 +24,44 @@
             hls.loadSource(videoSrc);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                video.play();
+                video.play().catch(function () {
+                    alert("⚠️ We have faced a technical issue in streaming.\nWe will continue as we crack an access.");
+                });
             });
-        } 
+
+            // Handle any HLS loading error
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            alert("⚠️ Network error occurred while loading the stream.");
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            alert("⚠️ Media error. We have faced a technical issue in streaming.");
+                            break;
+                        default:
+                            alert("⚠️ We have faced a technical issue in streaming.\nWe will continue as we crack an access.");
+                            break;
+                    }
+                }
+            });
+
+        }
         // Fallback for Safari
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoSrc;
             video.addEventListener('loadedmetadata', function () {
-                video.play();
+                video.play().catch(function () {
+                    alert("⚠️ We have faced a technical issue in streaming.\nWe will continue as we crack an access.");
+                });
             });
-        } 
+        }
         // If unsupported, show an error
         else {
-            alert("⚠️ Your browser does not support HLS streaming.");
+            alert("⚠️ Your browser does not support HLS streaming. We will continue as we crack an access.");
         }
     </script>
 
 </body>
+
 </html>
