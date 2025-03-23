@@ -6,40 +6,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports18 HD Live Stream</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             background-color: #000;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow-x: hidden;
         }
 
         #video {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
+            width: 95%;
+            max-width: 900px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
         }
 
         #controls {
-            margin-top: 10px;
+            margin-top: 15px;
             text-align: center;
         }
 
-        select, button {
-            padding: 10px;
+        select,
+        button {
+            padding: 10px 15px;
             margin: 5px;
-            font-size: 16px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: #f8b400;
+            color: #000;
+            transition: background-color 0.3s;
+        }
+
+        select:focus,
+        button:focus {
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #ffa500;
         }
 
         #tg-button {
             margin-top: 15px;
         }
+
+        /* Sidebar Styles */
+        #sidebar {
+            width: 250px;
+            background-color: #1b1b1b;
+            color: #fff;
+            position: fixed;
+            right: -260px;
+            top: 0;
+            height: 100%;
+            padding-top: 60px;
+            transition: 0.4s ease;
+            z-index: 1000;
+            box-shadow: -4px 0 8px rgba(0, 0, 0, 0.6);
+        }
+
+        #sidebar.open {
+            right: 0;
+        }
+
+        #sidebar h3 {
+            color: #f8b400;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .social-icons a {
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            transition: transform 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Sidebar Button */
+        #menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f8b400;
+            color: #000;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #menu-btn:hover {
+            background-color: #ffa500;
+            transform: scale(1.05);
+        }
+
+        #menu-btn:focus {
+            outline: none;
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar with Social Profiles -->
+    <div id="sidebar">
+        <h3>📢 Social Profiles</h3>
+        <div class="social-icons">
+          
+            <a href="https://t.me/dhyeygotyou" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram"
+                    class="social-icon">
+            </a>
+            <a href="https://www.instagram.com/dhyeyyyyyyyy" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram"
+                    class="social-icon">
+            </a>
+            <a href="https://www.linkedin.com/in/dhyeypatel29" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"
+                    class="social-icon">
+            </a>
+            <a href="https://github.com/dhyeyyyyyyyy" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/GitHub_Mark.png" alt="GitHub" class="social-icon">
+</a>
+          <!-- Admin Button in Sidebar -->
+<a href="admin.html" target="_blank">
+    <button class="admin-btn">⚙️ Admin Panel</button>
+</a>
+
+        </div>
+    </div>
 
     <!-- Video Player -->
     <video id="video" controls autoplay></video>
@@ -54,7 +179,7 @@
             <option value="240p">240P</option>
         </select>
         <button onclick="replayLast10Seconds()">⏪ Replay 10s</button>
-        <button onclick="toggleAudioMode()">🔊 Audio Only</button>
+        <button onclick="toggleAudioMode()">🎧 Audio Only</button>
     </div>
 
     <!-- Telegram Button -->
@@ -119,6 +244,7 @@
                 loadStream(streamLinks[currentQuality]);
                 isAudioOnly = false;
                 alert("🎥 Switched to Video Mode");
+                video.style.display = "block";
             } else {
                 video.muted = false;
                 loadStream(streamLinks[currentQuality]);
@@ -126,6 +252,12 @@
                 isAudioOnly = true;
                 alert("🎧 Switched to Audio-Only Mode");
             }
+        }
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("open");
         }
 
         // Load Default Quality on Page Load
