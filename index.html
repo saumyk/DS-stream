@@ -32,11 +32,11 @@
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, function () {
                 video.play().catch(function () {
-                    console.error("Error starting video playback.");
+                    console.error("⚠️ Error starting video playback.");
                 });
             });
 
-            // Handle any HLS loading error
+            // Handle any HLS loading error silently
             hls.on(Hls.Events.ERROR, function (event, data) {
                 if (data.fatal) {
                     console.error("⚠️ Error loading video:", data);
@@ -48,13 +48,13 @@
             video.src = videoSrc;
             video.addEventListener('loadedmetadata', function () {
                 video.play().catch(function () {
-                    console.error("Error starting video playback.");
+                    console.error("⚠️ Error starting video playback.");
                 });
             });
         }
-        // If unsupported, show an error
+        // If unsupported, log the error without alert
         else {
-            alert("⚠️ Your browser does not support HLS streaming.");
+            console.error("⚠️ Your browser does not support HLS streaming.");
         }
     </script>
 
