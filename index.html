@@ -37,8 +37,31 @@
             border-radius: 10px;
         }
 
-        #tg-button {
+        #tg-button,
+        #stream-buttons {
             margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f8b400;
+            color: #000;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #ffa500;
+            transform: scale(1.05);
+        }
+
+        button:focus {
+            outline: none;
         }
 
         /* Sidebar Styles */
@@ -160,6 +183,12 @@
         <iframe id="video-frame" src="https://ifram.embedxt.site/iframe/frame.php" allowfullscreen></iframe>
     </div>
 
+    <!-- Stream Selection Buttons -->
+    <div id="stream-buttons">
+        <button onclick="changeStream('https://channel5.csports.tv/1030826119/index.m3u8')">🏏 English Server</button>
+        <button onclick="changeStream('https://channel6.csports.tv/1529157792/index.m3u8')">🏏 Hindi Server 2</button>
+    </div>
+
     <!-- Stats -->
     <div id="stats">
         📡 Total IPL Viewers: <span id="viewer-count">0</span><br />
@@ -178,6 +207,11 @@
         function toggleSidebar() {
             var sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("open");
+        }
+
+        // Change Stream Based on Language
+        function changeStream(url) {
+            document.getElementById("video-frame").src = url;
         }
 
         // IPL Viewers Counter (Dynamic 1,000 - 10,000)
