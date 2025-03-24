@@ -22,38 +22,19 @@
             overflow-x: hidden;
         }
 
-        #video {
+        #video-container {
             width: 95%;
             max-width: 900px;
+            height: 500px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
         }
 
-        #controls {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        select,
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            font-size: 14px;
-            border-radius: 5px;
+        iframe {
+            width: 100%;
+            height: 100%;
             border: none;
-            cursor: pointer;
-            background-color: #f8b400;
-            color: #000;
-            transition: background-color 0.3s;
-        }
-
-        select:focus,
-        button:focus {
-            outline: none;
-        }
-
-        button:hover {
-            background-color: #ffa500;
+            border-radius: 10px;
         }
 
         #tg-button {
@@ -174,20 +155,9 @@
         </div>
     </div>
 
-    <!-- Video Player -->
-    <video id="video" controls autoplay></video>
-
-    <!-- Quality Selector & Extra Controls -->
-    <div id="controls">
-        <select id="quality" onchange="changeQuality()">
-            <option value="1080p">1080P (HD)</option>
-            <option value="720p">720P</option>
-            <option value="480p">480P</option>
-            <option value="280p">280P</option>
-            <option value="240p">240P</option>
-        </select>
-        <button onclick="replayLast10Seconds()">⏪ Replay 10s</button>
-        <button onclick="toggleAudioMode()">🎧 Audio Only</button>
+    <!-- IPL 2025 Embedded Video Player -->
+    <div id="video-container">
+        <iframe id="video-frame" src="https://ifram.embedxt.site/iframe/frame.php" allowfullscreen></iframe>
     </div>
 
     <!-- Stats -->
@@ -203,71 +173,7 @@
         </a>
     </div>
 
-    <!-- HLS.js Library (CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.3.5"></script>
-
     <script>
-        var video = document.getElementById("video");
-        var hls = new Hls();
-        var currentQuality = "1080p"; // Default Quality
-        var isAudioOnly = false; // For audio-only mode
-
-        // Define Stream URLs
-        var streamLinks = {
-            "1080p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=3728000.m3u8",
-            "720p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=1275600.m3u8",
-            "480p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=662800.m3u8",
-            "280p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=305200.m3u8",
-            "240p": "https://v18tataplaysyndication.akamaized.net/bpk-tv/Sports18_1_HD_voot_MOB/output03/hdntl=exp=1742807560~acl=%2f*~data=hdntl~hmac=c13add491ce7c3b1d330affbd97cee9fcec05c881cca43920854bcf1fcbc3c7b/Sports18_1_HD_voot_MOB-audio_42842_eng=42800-video=151600.m3u8"
-        };
-
-        // Load Stream Based on Selected Quality
-        function loadStream(url) {
-            if (Hls.isSupported()) {
-                hls.detachMedia();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    video.play();
-                });
-            } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-                video.src = url;
-                video.addEventListener("loadedmetadata", function () {
-                    video.play();
-                });
-            } else {
-                alert("⚠️ Your browser does not support HLS streaming.");
-            }
-        }
-
-        // Change Video Quality
-        function changeQuality() {
-            var selectedQuality = document.getElementById("quality").value;
-            currentQuality = selectedQuality;
-            loadStream(streamLinks[selectedQuality]);
-        }
-
-        // Replay Last 10 Seconds
-        function replayLast10Seconds() {
-            video.currentTime = Math.max(0, video.currentTime - 10);
-        }
-
-        // Toggle Audio-Only Mode
-        function toggleAudioMode() {
-            if (isAudioOnly) {
-                loadStream(streamLinks[currentQuality]);
-                isAudioOnly = false;
-                alert("🎥 Switched to Video Mode");
-                video.style.display = "block";
-            } else {
-                video.muted = false;
-                loadStream(streamLinks[currentQuality]);
-                video.style.display = "none";
-                isAudioOnly = true;
-                alert("🎧 Switched to Audio-Only Mode");
-            }
-        }
-
         // Toggle Sidebar
         function toggleSidebar() {
             var sidebar = document.getElementById("sidebar");
@@ -314,23 +220,11 @@
             }, 1000);
         }
 
-        video.addEventListener("play", function () {
-            startWatchTimeCounter();
-        });
-
-        video.addEventListener("pause", function () {
-            clearInterval(watchInterval);
-        });
-
-        video.addEventListener("ended", function () {
-            clearInterval(watchInterval);
-        });
-
-        // Load Default Quality and Watch Time on Page Load
+        // Start watch time counter on load
         window.onload = function () {
-            loadStream(streamLinks[currentQuality]);
             updateViewersCount();
             watchTimeElement.textContent = formatTime(watchTime);
+            startWatchTimeCounter();
         };
     </script>
 
