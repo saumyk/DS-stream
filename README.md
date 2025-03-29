@@ -32,7 +32,7 @@ Welcome to the **TATA IPL 2025 Live Streaming Web Application**! This project br
 
 ## 🔗 **Check It Out Live:**
 You can explore the live version of this project here:  
-➡️ [TATA IPL 2025 Live Streaming](https://github.com/dhyeyyyyyyyy/TATA-IPL-2025)
+➡️ [TATA IPL 2025 Live Streaming](https://dhyeyyyyyyyy.github.io/IPL2025/)
 
 ---
 
