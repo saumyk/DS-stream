@@ -147,6 +147,23 @@
             font-weight: bold;
             color: #f8b400;
         }
+        iframe {
+    position: relative;
+    z-index: 0;
+}
+iframe::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+       
     </style>
 </head>
 
@@ -169,12 +186,9 @@
 
     <!-- IPL 2025 Embedded Video Player -->
     <div id="video-container">
-        <video id="video-frame" width="900" height="500" controls>
-    <source src="https://mtsft.ruscfd.lat/720p.m3u8" type="application/x-mpegURL">
-    Your browser does not support the video tag.
-</video>
+     
 
-        <!--<iframe id="video-frame" src="https://ifram.embedxt.site/iframe/frame.php" allowfullscreen></iframe> -->
+        <iframe id="video-frame" src="https://ifram.embedxt.site/iframe/frame.php" allowfullscreen></iframe> 
     </div>
 
     <!-- Stream Selection Buttons -->
