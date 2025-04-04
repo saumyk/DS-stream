@@ -193,20 +193,7 @@
     </div>
 
     <script>
-        // First Popup (Browser Alert)
-        setTimeout(() => {
-            let firstPopup = confirm("Join Our Telegram Channel Tushar Stream");
-            if (firstPopup) {
-                window.location.href = "https://t.me/allmoviesandwebseriesds";
-            }
-            setTimeout(() => {
-                document.getElementById("customPopup").style.display = "flex";
-            }, 500);
-        }, 1000);
-
-        function closePopup() {
-            document.getElementById("customPopup").style.display = "none";
-        }
+      
 
         // Fetch JSON and Load JW Player
         fetch("https://raw.githubusercontent.com/StmpupCricket/Star-Sports-Hindi-json/refs/heads/main/data.json") // Replace with actual hosted JSON URL
